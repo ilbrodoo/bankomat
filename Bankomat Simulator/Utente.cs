@@ -19,7 +19,7 @@ namespace BankomatSimulator
         public bool Bloccato { get => _bloccato; }
 
         public ContoCorrente contoCorrente { get => _contoCorrente; set => _contoCorrente = value; }
-
+        public int Tentativi { get; set; }
         public int TentativiDiAccessoResidui
         {
             get

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading.Tasks;
 using static BankomatSimulator.ContoCorrente;
@@ -34,12 +35,11 @@ namespace BankomatSimulator
         private SortedList<int,Funzionalita> _funzionalita;
 
 
-        private Utente _utenteCorrente;
+        private Utenti _utenteCorrente;
 
         public string Nome { get => _nome; set => _nome = value; }
 
-        public List<Utente> Utenti { get => _utenti; set => _utenti = value; }
-        public Utente UtenteCorrente { get => _utenteCorrente; set => _utenteCorrente = value; }
+        public Utenti UtenteCorrente { get => _utenteCorrente; set => _utenteCorrente = value; }
         internal SortedList<int, Funzionalita> ElencoFunzionalita { get => _funzionalita; set => _funzionalita = value; }
 
         /// <summary>
@@ -48,13 +48,14 @@ namespace BankomatSimulator
         /// </summary>
         /// <param name="credenziali">Dati inseriti dall'utente </param>
         /// <returns></returns>
-        public EsitoLogin Login(Utente credenziali, out Utente utente)
+        public EsitoLogin Login(Utenti credenziali, out Utente utente, BancomatEntities ctx)
         {
+            
             Utente utenteDaValidare = null;
             //ricerco utente sul 
             utente = null;
 
-            foreach (var elem in Utenti)
+            foreach (Utenti elem in ctx.Utentis)
             {
                 if(elem.NomeUtente == credenziali.NomeUtente)
                 {
@@ -71,7 +72,7 @@ namespace BankomatSimulator
             if (credenziali.Password != utenteDaValidare.Password)
             {
                 utente = utenteDaValidare;
-                utenteDaValidare.TentativiDiAccessoErrati++;
+                utente.Tentativi++;
                 if (utenteDaValidare.Bloccato)
                 {
                     return EsitoLogin.AccountBloccato;
@@ -85,11 +86,10 @@ namespace BankomatSimulator
                 {
                     return EsitoLogin.AccountBloccato;
                 }
-                utenteDaValidare.TentativiDiAccessoErrati = 0;
+                utente.Tentativi = 0;
                 return EsitoLogin.AccessoConsentito;   
             }
         }
-
 
 
     }
